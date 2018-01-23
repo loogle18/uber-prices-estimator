@@ -34,7 +34,7 @@ def price_eta():
     if _check_token(request.cookies.get("token")):
         form = request.form
         if form:
-            city, start, end = form["city"] or "Lviv", form["from"], form["to"]
+            city, start, end = form["city"] or "Львів", form["from"], form["to"]
             if start and end:
                 high_eta, low_eta, error = get_estimations(start=city + " " + start,
                                                            end=city + " " + end)

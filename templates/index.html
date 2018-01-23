@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <form action="/price_eta" method="POST" enctype="multipart/form-data">
-        <input type="text" name="city" placeholder="Target city. Default - Lviv.">
-        <input type="text" name="from" placeholder="From">
-        <input type="text" name="to" placeholder="To">
-        <button type="submit">Get estimation</button>
+        <input type="text" name="city" placeholder="Місто (за замовчуванням - Львів)"
+               class="text-field">
+        <input type="text" name="from" required="required" placeholder="Звідки"
+               class="text-field">
+        <input type="text" name="to" required="required" placeholder="Куди"
+               class="text-field">
+        <button type="submit" class="submit-eta">Дізнатись ціну</button>
     </form>
 {% endblock %}
