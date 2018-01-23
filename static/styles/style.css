@@ -8,9 +8,14 @@ html {
   font-family: "Helvetica Neue", "Helvetica", sans-serif;
 }
 
-#content,
+.content,
 .header {
   padding: 15px 20px;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 1024px;
 }
 
 .header {
@@ -58,10 +63,34 @@ html {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.25;
+  outline: 0;
   padding: 7px 14px;
   text-align: center;
   user-select: none;
   vertical-align: middle;
   white-space: nowrap;
   width: 100%;
+}
+
+.info-block {
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+  display: block;
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding: 30px 15px;
+  text-align: center;
+}
+
+.info-block.-eta-text {
+  background-color: #a0d3e8;
+  border-color: #74bfdd;
+  color: #4f4f4f;
+}
+
+.info-block.-error {
+  background-color: #f04124;
+  border-color: #de2d0f;
+  color: #ffffff;
 }

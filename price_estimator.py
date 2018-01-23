@@ -1,3 +1,4 @@
+from re import sub as re_sub
 from requests import session as requests_session
 from urllib.parse import urlencode
 from uber_rides.session import Session
@@ -6,6 +7,7 @@ from config import uber_client_token, google_api_key
 
 
 BASE_GEOCODE_URL = "https://maps.google.com/maps/api/geocode/json?"
+ADDRESS_CLEANER_PATTERN = "(?![\, ])(?!-)+\W"
 
 
 def get_estimations(start, end):
@@ -32,16 +34,28 @@ def get_estimations(start, end):
                 end_longitude=end_location["lng"],
                 seat_count=1
             )
-            high_eta = estimation.json["prices"][0]["high_estimate"]
-            low_eta = estimation.json["prices"][0]["low_estimate"]
+            high_eta = int(estimation.json["prices"][0]["high_estimate"])
+            low_eta = int(estimation.json["prices"][0]["low_estimate"])
         except Exception as e:
-            error = e
+            print(e)
+            error = "Щось пішло не так. Неможливо знайти координати." +\
+            "Перевірте правильність написання."
 
     return (high_eta, low_eta, error)
 
 
 def _get_coordinates_for(address):
-    params = {"address": address, "sensor": "false", "key": google_api_key}
+    formatted_address = re_sub(ADDRESS_CLEANER_PATTERN, "", address.strip())
+    city = formatted_address.split(" ")[0]
+
+    if not re_sub("(%s|\W)" % city, "", formatted_address):
+        return
+
+    params = {
+        "address": formatted_address,
+        "sensor": "false",
+        "key": google_api_key
+    }
     url = BASE_GEOCODE_URL + urlencode(params)
     session = requests_session()
     session.headers["Connection"] = "close"

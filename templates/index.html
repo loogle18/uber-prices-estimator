@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
+    {% if args.error %}
+        <div class="info-block -error">{{args.error}}</div>
+    {% endif %}
+    {% if args.eta_text and not args.error%}
+        <div class="info-block -eta-text">{{args.eta_text}}</div>
+    {% endif %}
     <form action="/price_eta" method="POST" enctype="multipart/form-data">
         <input type="text" name="city" placeholder="Місто (за замовчуванням - Львів)"
                class="text-field">

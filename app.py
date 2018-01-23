@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, render_template, jsonify, make_response, redirect
+from flask import Flask, request, render_template, make_response, redirect
 from flask_httpauth import HTTPBasicAuth
 from config import app_user_login, app_user_password, debug_mode
 from base64 import b64decode, b64encode
@@ -20,7 +20,7 @@ def get_pw(username):
 @app.route("/", methods=["GET"])
 @auth.login_required
 def index():
-    response = make_response(render_template("index.html"))
+    response = make_response(render_template("index.html", args={}))
 
     credentials = request.authorization["username"] + ":" + request.authorization["password"]
     encoded_token = b64encode(credentials.encode("utf-8"))
@@ -36,12 +36,15 @@ def price_eta():
         if form:
             city, start, end = form["city"] or "Львів", form["from"], form["to"]
             if start and end:
+                args = {"eta_text": None, "error": None}
                 high_eta, low_eta, error = get_estimations(start=city + " " + start,
                                                            end=city + " " + end)
+                args["error"] = error
                 if not error:
-                    return "Від %d до %d грн.\n Середнє: %d грн." % (low_eta, high_eta, (high_eta + low_eta) / 2)
-                else:
-                    return error
+                    args["eta_text"] = "Приблизна вартість від {} до {} грн.\n Середня: {} грн." \
+                    .format(low_eta, high_eta, int((high_eta + low_eta) / 2))
+
+                return render_template("index.html", args=args)
     else:
         return redirect("/", code=302)
 
