@@ -1,12 +1,22 @@
 <!doctype html>
 <html>
     <head>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+        <meta content="width=device-width, initial-scale=1.0, user-scalable=no"
+              name="viewport">
         <title>Uber Prices Estimator</title>
+        <link rel="stylesheet" media="all"
+              href="{{ url_for('static', filename='styles/style.css') }}">
     </head>
     <body>
-        <div class="nav">Uber Prices Estimator</div>
+        <div class="header">
+            <a href="/" class="brand-link">
+                <span class="brand-text-first">UBER</span>
+                <span class="brand-text-second">Prices Estimator</span>
+            </a>
+        </div>
         <div id="content">
-        {% block content %}{% endblock %}
+            {% block content %}{% endblock %}
         </div>
     </body>
 </html>
