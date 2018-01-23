@@ -36,8 +36,12 @@ def price_eta():
         if form:
             city, start, end = form["city"] or "Lviv", form["from"], form["to"]
             if start and end:
-                estimations = get_estimations(start=city + " " + start, end=city + " " + end )
-                return estimations.json["prices"][0]["estimate"]
+                high_eta, low_eta, error = get_estimations(start=city + " " + start,
+                                                           end=city + " " + end)
+                if not error:
+                    return "Від %d до %d грн.\n Середнє: %d грн." % (low_eta, high_eta, (high_eta + low_eta) / 2)
+                else:
+                    return error
     else:
         return redirect("/", code=302)
 
