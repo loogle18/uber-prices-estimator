@@ -63,4 +63,4 @@ def _check_token(token):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=debug_mode)
+    app.run(debug=debug_mode)
