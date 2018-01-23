@@ -1,6 +1,6 @@
 from flask import Flask, Response, request, render_template, jsonify, make_response, redirect
 from flask_httpauth import HTTPBasicAuth
-from config import app_user_login, app_user_password
+from config import app_user_login, app_user_password, debug_mode
 from base64 import b64decode, b64encode
 from price_estimator import get_estimations
 
@@ -60,4 +60,4 @@ def _check_token(token):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=debug_mode)
