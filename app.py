@@ -49,10 +49,8 @@ def price_eta():
                     flash(eta_text, "success-eta")
 
                     session["city"] = city
-                    session["start"]["address"] = start
-                    session["start"]["coordinates"] = start_location
-                    session["end"]["address"] = end
-                    session["end"]["coordinates"] = end_location
+                    session["start"] = {"address": start, "coordinates": start_location}
+                    session["end"] = {"address": end, "coordinates": end_location}
                     session["mean_eta"] = mean_eta
                 else:
                     flash(error, "error")
