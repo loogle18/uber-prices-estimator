@@ -8,6 +8,10 @@ html {
   font-family: "Helvetica Neue", "Helvetica", sans-serif;
 }
 
+form + form {
+  margin-top: 40px;
+}
+
 .content,
 .header {
   padding: 15px 20px;
@@ -83,7 +87,8 @@ html {
   text-align: center;
 }
 
-.info-block.-success {
+.info-block.-success-eta,
+.info-block.-success-low-eta {
   background-color: #a0d3e8;
   border-color: #74bfdd;
   color: #4f4f4f;
