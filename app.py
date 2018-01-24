@@ -69,13 +69,16 @@ def low_price_eta():
         if form:
             email, timeout, rebate = form["email"], form["timeout"], form["rebate"]
             if email and timeout and rebate:
-                if session["mean_eta"]:
+                if session["mean_eta"] and int(rebate) < session["mean_eta"]:
                     executor.submit(get_estimates_and_send_email,
                                     email, int(timeout), int(rebate),
                                     session["city"], session["start"],
                                     session["end"], session["mean_eta"])
                     flash("Запит на перевірку успішно відправлено. Після закінчення Ви отримаєте лист.",
                           "success-low-eta")
+                elif session["mean_eta"] and int(rebate) >= session["mean_eta"]:
+                    flash("Некоректні дані. Знижка має бути нижча за поточну середню ціну.",
+                          "error")
                 else:
                     flash("Неможливо дізнатись інформацію про попередній запит.",
                           "error")
