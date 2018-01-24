@@ -1,9 +1,11 @@
+from time import sleep
 from re import sub as re_sub
 from requests import session as requests_session
 from urllib.parse import urlencode
 from uber_rides.session import Session
 from uber_rides.client import UberRidesClient
 from config import uber_client_token, google_api_key
+from email_sender import send_email_message
 
 
 BASE_GEOCODE_URL = "https://maps.google.com/maps/api/geocode/json?"
@@ -25,16 +27,16 @@ def get_estimates_from_addresses(start, end):
         error += " Перевірте правильність написання."
     else:
         high_eta, low_eta, error = get_estimates_from_coordinates(
-            slat=start_location["lat"], 
-            slon=start_location["lng"], 
-            elat=end_location["lat"], 
-            elon=end_location["lng"]
+            slat=start_location["lat"],
+            slng=start_location["lng"],
+            elat=end_location["lat"],
+            elng=end_location["lng"]
         )
 
-    return (high_eta, low_eta, error)
+    return (high_eta, low_eta, start_location, end_location, error)
 
 
-def get_estimates_from_coordinates(slat, slon, elat, elon):
+def get_estimates_from_coordinates(slat, slng, elat, elng):
     high_eta = None
     low_eta = None
     error = None
@@ -44,19 +46,55 @@ def get_estimates_from_coordinates(slat, slon, elat, elon):
     try:
         estimation = client.get_price_estimates(
             start_latitude=slat,
-            start_longitude=slon,
+            start_longitude=slng,
             end_latitude=elat,
-            end_longitude=elon,
+            end_longitude=elng,
             seat_count=1
         )
         high_eta = int(estimation.json["prices"][0]["high_estimate"])
         low_eta = int(estimation.json["prices"][0]["low_estimate"])
     except Exception as e:
         print(e)
-        error = "Щось пішло не так. Неможливо знайти координати." +\
-        "Перевірте правильність написання."
+        error = "Щось пішло не так. Неможливо знайти координати."
+        error += "Перевірте правильність написання."
 
     return (high_eta, low_eta, error)
+
+
+def get_estimates_and_send_email(email, timeout, rebate, city, start, end, mean_eta):
+    timer = 0
+    mean_prices = [mean_eta]
+    success_message = None
+    ride_address = "м. %s від %s до %s" % (city, start["address"], end["address"])
+
+    while timer < timeout:
+        high_eta, low_eta, error = get_estimates_from_coordinates(
+            slat=start["coordinates"]["lat"],
+            slng=start["coordinates"]["lng"],
+            elat=end["coordinates"]["lat"],
+            elng=end["coordinates"]["lng"]
+        )
+        if not error:
+            new_mean_eta = int((high_eta + low_eta) / 2)
+            if mean_eta - new_mean_eta >= rebate:
+                success_message = "Знайдено необхідну нижчу ціну для поїздки %s. " % ride_address
+                success_message += "Нова ціна: %s грн." % new_mean_eta
+                success_message += "\nСтара ціна була %s." % mean_eta
+                break
+            mean_prices.append(new_mean_eta)
+
+        print("\n\n\n")
+        print(mean_eta, new_mean_eta, error)
+        print("\n\n\n")
+        sleep(60)
+        timer += 1
+
+    mean_prices.sort()
+    min_price = mean_prices[0]
+    unsuccess_message = "Не знайдено необхідну нижчу ціну для поїздки %s." % ride_address
+    unsuccess_message += "\nНайменьша вартість поїздки, яку вдалось знайти була %s грн." % min_price
+    message = success_message or unsuccess_message
+    send_email_message(mailto=email, message=message)
 
 
 def _get_coordinates_for(address):

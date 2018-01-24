@@ -87,11 +87,16 @@ form + form {
   text-align: center;
 }
 
-.info-block.-success-eta,
-.info-block.-success-low-eta {
+.info-block.-success-eta {
   background-color: #a0d3e8;
   border-color: #74bfdd;
   color: #4f4f4f;
+}
+
+.info-block.-success-low-eta {
+  background-color: #43ac6a;
+  border-color: #3a945b;
+  color: #ffffff
 }
 
 .info-block.-error {

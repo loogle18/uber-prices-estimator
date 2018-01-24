@@ -6,13 +6,13 @@
             {% if category == "success-eta" %}
                 <h2>Отримати інформацію про зниження ціни на електронну пошту.</h2>
                 <form action="/low_price_eta" method="POST" enctype="multipart/form-data">
-                    <input type="email" name="email" required="required" 
+                    <input type="email" name="email" required="required"
                            placeholder="Електронна пошта" class="text-field">
-                    <input type="number" name="timeout" value="10" required="required"
-                           placeholder="Скільки хвилин перевіряти (мін. 1, макс. 20)"
-                           min="1" max="20" class="text-field">
-                    <input type="number" name="rebate" value="10" required="required"
-                           placeholder="Мінімальне зниження ціни (мін. 5 грн)"
+                    <input type="number" name="timeout" required="required"
+                           placeholder="Скільки хвилин перевіряти (від 5 до 20)"
+                           min="5" max="20" class="text-field">
+                    <input type="number" name="rebate" required="required"
+                           placeholder="Мінімальне зниження ціни (від 5 грн)"
                            class="text-field" min="5">
                     <button type="submit" class="submit-eta">Почати перевіряти</button>
                 </form>
