@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, make_response, redirect, flas
 from flask_httpauth import HTTPBasicAuth
 from config import app_user_login, app_user_password, debug_mode, app_secret_key
 from base64 import b64decode, b64encode
-from price_estimator import get_estimations
+from price_estimator import get_estimates_from_addresses
 
 
 app = Flask(__name__)
@@ -37,8 +37,8 @@ def price_eta():
         if form:
             city, start, end = form["city"] or "Львів", form["from"], form["to"]
             if start and end:
-                high_eta, low_eta, error = get_estimations(start=city + " " + start,
-                                                           end=city + " " + end)
+                high_eta, low_eta, error = get_estimates_from_addresses(start=city + " " + start,
+                                                                        end=city + " " + end)
                 if not error:
                     mean_eta = int((high_eta + low_eta) / 2)
                     eta_text = "Приблизна вартість від {} до {} грн.\n Середня: {} грн." \
