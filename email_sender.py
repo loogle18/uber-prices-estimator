@@ -17,3 +17,4 @@ def send_email_message(mailto, message):
     text = msg.as_string()
     server.sendmail(email_sender_address, mailto, text)
     server.quit()
+    print("Sent email to %s. Message: \n %s" % (mailto, message))

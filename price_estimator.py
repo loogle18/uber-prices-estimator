@@ -62,12 +62,12 @@ def get_estimates_from_coordinates(slat, slng, elat, elng):
 
 
 def get_estimates_and_send_email(email, timeout, rebate, city, start, end, mean_eta):
-    timer = 0
+    timer = 1
     mean_prices = [mean_eta]
     success_message = None
     ride_address = "м. %s від %s до %s" % (city, start["address"], end["address"])
 
-    while timer < timeout:
+    while timer <= timeout:
         high_eta, low_eta, error = get_estimates_from_coordinates(
             slat=start["coordinates"]["lat"],
             slng=start["coordinates"]["lng"],
@@ -83,9 +83,7 @@ def get_estimates_and_send_email(email, timeout, rebate, city, start, end, mean_
                 break
             mean_prices.append(new_mean_eta)
 
-        print("\n\n\n")
-        print(mean_eta, new_mean_eta, error)
-        print("\n\n\n")
+        print("Checked %s times for email: %s and route: %s." % (timer, email, ride_address))
         sleep(60)
         timer += 1
 
