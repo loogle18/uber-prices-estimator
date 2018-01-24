@@ -1,11 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% if args.error %}
-        <div class="info-block -error">{{args.error}}</div>
-    {% endif %}
-    {% if args.eta_text and not args.error%}
-        <div class="info-block -eta-text">{{args.eta_text}}</div>
-    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="info-block -{{category}}">{{message}}</div>
+        {% endfor %}
+    {% endwith %}
     <form action="/price_eta" method="POST" enctype="multipart/form-data">
         <input type="text" name="city" placeholder="Місто (за замовчуванням - Львів)"
                class="text-field">
