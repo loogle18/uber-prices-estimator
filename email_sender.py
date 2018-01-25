@@ -6,8 +6,8 @@ from config import sendgrid_api_key
 def send_email_message(mailto, message):
     try:
         sendgrid_client = SendGridAPIClient(apikey=sendgrid_api_key)
-        from_email = Email("noreply@uberestimator.com")
-        subject = "Uber Prices Estimator"
+        from_email = Email("noreply@uberestimator.com", "Uber Prices Estimator")
+        subject = "Uber ride estimates"
         to_email = Email(mailto)
         content = Content("text/plain", message)
         mail = Mail(from_email, subject, to_email, content)
