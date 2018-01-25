@@ -78,8 +78,8 @@ def get_estimates_and_send_email(email, timeout, rebate, city, start, end, mean_
             new_mean_eta = int((high_eta + low_eta) / 2)
             if mean_eta - new_mean_eta >= rebate:
                 success_message = "Знайдено необхідну нижчу ціну для поїздки %s. " % ride_address
-                success_message += "Нова ціна: %s грн." % new_mean_eta
-                success_message += "\nСтара ціна була %s." % mean_eta
+                success_message += "Нова вартість: %s грн." % new_mean_eta
+                success_message += "\nПочаткова вартість була %s." % mean_eta
                 break
             mean_prices.append(new_mean_eta)
 
@@ -89,8 +89,9 @@ def get_estimates_and_send_email(email, timeout, rebate, city, start, end, mean_
 
     mean_prices.sort()
     min_price = mean_prices[0]
-    unsuccess_message = "Не знайдено необхідну нижчу ціну для поїздки %s." % ride_address
+    unsuccess_message = "Не знайдено необхідну нижчу ціну (хочаб %s грн.) для поїздки %s." % (mean_eta - rebate, ride_address)
     unsuccess_message += "\nНайменьша вартість поїздки, яку вдалось знайти була %s грн." % min_price
+    unsuccess_message += "\nПочаткова вартість була %s грн." % mean_eta
     message = success_message or unsuccess_message
     send_email_message(mailto=email, message=message)
 
