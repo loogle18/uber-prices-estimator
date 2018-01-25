@@ -1,23 +1,17 @@
-from smtplib import SMTP
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from config import email_sender_address, email_sender_password
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Email, Content, Mail
+from config import sendgrid_api_key
 
 
 def send_email_message(mailto, message):
     try:
-        msg = MIMEMultipart()
-        msg["From"] = email_sender_address
-        msg["To"] = mailto
-        msg["Subject"] = "Uber Prices Estimator"
-        msg.attach(MIMEText(message, "plain"))
-
-        server = SMTP("smtp.gmail.com:587")
-        server.starttls()
-        server.login(email_sender_address, email_sender_password)
-        text = msg.as_string()
-        server.sendmail(email_sender_address, mailto, text)
-        server.quit()
-        print("Sent email to %s. Message: \n %s" % (mailto, message))
+        sendgrid_client = SendGridAPIClient(apikey=sendgrid_api_key)
+        from_email = Email("noreply@uberestimator.com")
+        subject = "Uber Prices Estimator"
+        to_email = Email(mailto)
+        content = Content("text/plain", message)
+        mail = Mail(from_email, subject, to_email, content)
+        response = sendgrid_client.client.mail.send.post(request_body=mail.get())
+        print("Sent email to %s with status_code: %s. Message: \n %s" % (mailto, response.status_code, message))
     except Exception as e:
         print(e)
