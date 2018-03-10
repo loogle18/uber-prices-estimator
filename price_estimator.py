@@ -55,7 +55,7 @@ def get_estimates_from_coordinates(slat, slng, elat, elng):
         low_eta = int(estimation.json["prices"][0]["low_estimate"])
     except Exception as e:
         print(e)
-        error = "Щось пішло не так. Неможливо знайти координати. "
+        error = "Щось пішло не так. Неможливо знайти ціну по заданим координатам. "
         error += "Перевірте правильність написання."
 
     return (high_eta, low_eta, error)

@@ -76,7 +76,7 @@ def api_price_eta():
             get_estimates_from_coordinates(slat=slat, slng=slng, elat=elat, elng=elng)
             if not error:
                 mean_eta = int((high_eta + low_eta) / 2)
-                eta_text = "Приблизна вартість від {} до {} грн.\n Середня: {} грн." \
+                eta_text = "Приблизна вартість від {} до {} грн.\nСередня: {} грн." \
                 .format(low_eta, high_eta, mean_eta)
                 return jsonify(success=True, eta_text=eta_text)
             else:
