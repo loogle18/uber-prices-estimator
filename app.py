@@ -1,13 +1,15 @@
-from flask import Flask, request, render_template, make_response, redirect, flash, url_for, session
+from flask import Flask, request, render_template, make_response, redirect, flash, url_for, jsonify, session
 from flask_httpauth import HTTPBasicAuth
 from config import app_user_login, app_user_password, debug_mode, app_secret_key
 from base64 import b64decode, b64encode
-from price_estimator import get_estimates_from_addresses, get_estimates_and_send_email
+from price_estimator import get_estimates_from_addresses, get_estimates_and_send_email, get_estimates_from_coordinates
 from concurrent.futures import ThreadPoolExecutor
+from json import loads as json_loads
 
 
 app = Flask(__name__)
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+app.config["JSON_AS_ASCII"] = False
 app.secret_key = app_secret_key
 
 executor = ThreadPoolExecutor(max_workers=1)
@@ -61,6 +63,28 @@ def price_eta():
         return redirect("/", code=302)
 
 
+@app.route("/api/price_eta", methods=["POST"])
+def api_price_eta():
+    data = request.get_data()
+    json_data = json_loads(data) if data else {}
+    if _check_token(json_data.get("token")):
+        slat, slng = json_data.get("slat"), json_data.get("slng")
+        elat, elng = json_data.get("elat"), json_data.get("elng")
+
+        if slat and slng and elat and elng:
+            (high_eta, low_eta, error) = \
+            get_estimates_from_coordinates(slat=slat, slng=slng, elat=elat, elng=elng)
+            if not error:
+                mean_eta = int((high_eta + low_eta) / 2)
+                eta_text = "Приблизна вартість від {} до {} грн.\n Середня: {} грн." \
+                .format(low_eta, high_eta, mean_eta)
+                return jsonify(success=True, eta_text=eta_text)
+            else:
+                return jsonify(success=False, error=error)
+    else:
+        return jsonify(success=False, error="Необхідна авторизація!")
+
+
 @app.route("/low_price_eta", methods=["POST"])
 def low_price_eta():
     if _check_token(request.cookies.get("token")):
@@ -91,8 +115,12 @@ def err_405(error):
 
 def _check_token(token):
     if token:
-        credentials = b64decode(token).decode("utf-8").split(":")
-        return user.get(credentials[0]) == credentials[1]
+        try:
+            credentials = b64decode(token).decode("utf-8").split(":")
+            return user.get(credentials[0]) == credentials[1]
+        except Exception as error:
+            print(error)
+            return False
     else:
         return False
 
